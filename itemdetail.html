@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/detail_stylesheet.css">
+	<link rel="stylesheet" type="text/css" href="/static/generic_stylesheet.css">
+	<title>Item Details</title>
+</head>
+<body>
+    <div class="page curltl">
+	<h2>Title: {{Items.get_by_key_name(key_name).Title}}</h2>
+	<h3>Description: {{Items.get_by_key_name(key_name).Description}}</h3>
+	<h3>Price: {{Items.get_by_key_name(key_name).Price}}</h3>
+	<h3>Seller:{{Items.get_by_key_name(key_name).Seller.nickname()}}</h3>
+	<h3>Creation Date: {{Items.get_by_key_name(key_name).Creation_Date}}</h3>
+<br>
+	
+	{% for comment in Items.get_by_key_name(key_name).Comments %}
+	<p> {{comment}} </p>
+	{% endfor %}
+	{% if user %}
+	<br><form name="comment_post" action="/item_detail" method="post">
+                                        <input type="text" name="key_name" style="display:none" value="{{key_name}}" >
+                                        <input type="text" name="comment" multiline="true" value = '{{escape}}'><button class="red-button" type="submit">Post Reply</button>
+                                        </form>
+    {% else %}
+    <input class="red-button" type = 'submit' disabled value='Please log in to post reply'>
+    {% endif %}
+	</div>
+
+	{% if not_seller and not_buyer %}
+	<!-- Change action to appropriate one -->
+	<br><form name="interested_post" action="/interest" method="post">
+	<input type="text" name="key_name" class="invisible" value="{{Items.get_by_key_name(key_name).Key_Date}}" readonly style="display:none;">
+                                        <button class="blue-button" type="submit">I'm interested</button>
+                                        </form>
+	{% elif not not_buyer %}
+	<br><input class="blue-button" type = 'submit' disabled value='Interest Indicated!'>
+	
+	{% endif %}
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/static/generic_stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="/static/profile_stylesheet.css"/>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js'></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="/static/table_script.js"></script>
+
+<script src='/static/profile_script.js'></script>
+<title>Profile</title>
+</head>
+<body style="background-color:#222">
+	<div>
+	<form method='post' action='/profileedit'>
+		<font id="nickname">Nickname: </font><input type='text' name='nickname' value='{{User.get_by_key_name(user.email()).Name |escape}}'>
+		<button type='submit' class="blue-button">Change</button>
+	</form>
+{% if sell_list %}
+
+	<table border="1" id="browse_table" bordercolor="#FFCC00" style="background-color:#FFFFCC" width="auto" cellpadding="3" cellspacing="0" align = 'center'>
+								<tr id="title">
+								<td><b>Item name</b></td>
+                                <td><b>Delete Item</b></td>
+                                <td><b>Activate/Deactivate Item</b></td>
+                                <td><b>Interest List</b></td>
+                                </tr>
+
+	{% for i in sell_list %}
+		{% set item = Items.get_by_key_name(i) %}
+		<tr>
+	   <form method='post' action='/item_delete'>
+			<td><p class="item_text">{{item.Title}}</p></td>
+			<td><input type='text' name='key_name' value='{{item.Key_Date}}' style='display:none'>
+			<input type='text' name='redirect' value='/profile' style='display:none'>
+			<input type='text' name='user_email' value='{{user.email()}}' style='display:none'>
+			<button type='submit' class="red-button">Delete item</button></td>
+		</form>
+		<form method='post' action='/activation'>
+			<td><input type='text' name='key_name' value='{{item.Key_Date}}' style='display:none'>
+			{% if item.Activated==True %}
+				<button type='submit' class="red-button">Deactivate</button> </td>
+			{% endif %}
+			{% if item.Activated==False %}
+				<button type='submit' class="red-button">Activate</button> </td>
+			{% endif %}
+				
+		</form> 
+
+		{% set buyerlist = item.Buyers %}
+		{% if buyerlist %}
+            	<span>+</span>
+        	<div class="jqdemo">
+            	{% for j in buyerlist %}<td>
+            	<input type='text' name='buyer_id' value='{{j}}' style='display:none'>
+				<form method='post' action='/trade'>
+				<class="buyer_text">{{j}}
+				<input type='text' name='item_id' value='{{i}}' style='display:none'>
+				<button type='submit' class="blue-button">Trade!</button> </form></td>
+			{% endfor %}
+                </div>
+			{% else %}
+		<td> Nil </td>
+		{% endif %}
+
+	{% endfor %}
+
+{% else %}
+<p><font color= 'white'>You have no item on sales </font></p>
+{% endif %}
+</div>
+
+<div align='left'>
+<p></p>
+<form method='post' action='/deleteprofile'>
+	<input type='text' name='user_email' value='{{user.email()}}' style='display:none'>
+	<input type='text' name='redirect' value='/' style='display:none'>
+	<button type='submit' class='red-button'>Delete Profile</button>
+</form>
+</div>
+</body>
+</html>

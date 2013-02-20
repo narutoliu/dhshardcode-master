@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<head>
+	<link rel="stylesheet" href="/static/admin_stylesheet.css">
+	<link rel="stylesheet" href="/static/generic_stylesheet.css">
+	<title>Admin's Console</title>
+</head>
+
+<body>
+{% if user and users.is_current_user_admin() %}
+
+<table>
+	<tr>
+		<td>User</td>
+		<td>Delete user</td>
+		<td>Item</td>
+	</tr>
+
+{% for person in User.all() %}
+<tr>
+	<form method='post' action='/deleteprofile'>
+	<td>{{person.Name}}</td>
+	<input type='text' name='user_email' value='{{person.Email}}' style='display:none'>
+	<input type='text' name='redirect' value='/admin' style='display:none'>
+	<td><button type='submit' class="red-button">Delete profile</button></td>
+	</form>
+	{% if person.Sell_Items %}                        
+	<td>
+	<table>
+
+	{% for itemid in person.Sell_Items %}
+	{% set item = Items.get_by_key_name(itemid) %}
+	<tr>
+	<td>{{item.Title}}</td>
+			<td>
+			<form method='post' action='/item_delete'>
+			<input type='text' name='key_name' value='{{item.Key_Date}}' style='display:none'>
+			<input type='text' name='redirect' value='/admin' style='display:none'>
+			<input type='text' name='user_email' value='{{user.email()}}' style='display:none'>
+			<button type='submit' class="red-button">Delete item</button>
+			</form>
+		</td>
+	</tr>
+	{% endfor %}
+
+	{% else %}
+	<td><table><tr>
+    <td>	N/A </td>
+</tr>
+
+	{%endif%}
+
+
+</table>
+
+
+
+{% endfor %}
+</table>
+{% endif %}
+</body>
+</html>
